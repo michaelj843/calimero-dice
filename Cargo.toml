@@ -1,0 +1,21 @@
+[package]
+name = "dice-roller"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "A shared random dice roller: a calimero:app component"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+calimero-sdk = { git = "https://github.com/calimero-network/core", rev = "b3ba7ef1bc01af095beab22be5e971402bf1c80a" }
+serde = { version = "1", features = ["derive"] }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+calimero-sdk = { git = "https://github.com/calimero-network/core", rev = "b3ba7ef1bc01af095beab22be5e971402bf1c80a", features = ["testing"] }
+calimero-app-build = { git = "https://github.com/calimero-network/core", rev = "b3ba7ef1bc01af095beab22be5e971402bf1c80a" }
+serde_json = "1"
+
+# Standalone: the tests build this crate for wasm32-wasip2.
+[workspace]
