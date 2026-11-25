@@ -49,6 +49,36 @@ To package and deploy it, install `meroctl` from
 
 ```bash
 meroctl app build . --out dice.wasm
-meroctl app pack --wasm dice.wasm --package com.example.dice --app-version 0.1.0 --out dist/dice-0.1.0.mpk
+(cd app && npm ci && npm run build)
+meroctl app pack --wasm dice.wasm --frontend app/dist \
+  --package com.example.dice --app-version 0.1.0 --out dist/dice-0.1.0.mpk
 meroctl app inspect dist/dice-0.1.0.mpk
 ```
+
+## Frontend
+
+`app/` is a Vite + React page built on `@calimero-network/mero-react` (mero-js underneath).
+It signs in with a passkey, lets you pick a `com.example.dice` instance, rolls with `roll`,
+shows `history` and `count`, and refreshes live on every `Rolled` event, so everyone at the
+table sees each roll as it lands. All of it is `app/src/App.tsx`.
+
+```bash
+cd app
+npm install
+VITE_NODE_URL=http://127.0.0.1:2501 npm run dev   # a merod local node (mock attestation, dev only)
+VITE_CLUSTER=eu-shared-1 npm run dev              # or a Calimero Cloud cluster
+```
+
+On a dev node, sign in from an origin registered to the package, not `localhost:5173`
+(that is the cluster's own origin, so sessions there are not bound to the package and
+cannot create tables from a release another account installed: `400 VERSION_REQUIRED`):
+
+```bash
+meroctl app origins add com.example.dice http://dice.localhost:5173 --dev-passkey <file>
+# then open http://dice.localhost:5173
+```
+
+With neither set, the page talks to the node that serves it: pack it into the `.mpk` with
+`--frontend app/dist` (above). `VITE_PACKAGE` names the package to list instances of
+(default `com.example.dice`); `.env.example` lists every option. The build uses relative
+URLs and no inline scripts, as the node's content security policy requires.

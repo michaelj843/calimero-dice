@@ -1,0 +1,25 @@
+# Rust build output
+/target/
+
+# App build artifacts (meroctl app build / pack)
+*.wasm
+/dist/
+*.mpk
+
+# Frontend
+node_modules/
+app/dist/
+
+# Local env and secrets (dev passkeys, signing keys)
+.env
+.env.*
+!.env.example
+*.pem
+*passkey*.json
+*.key.json
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
